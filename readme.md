@@ -1,4 +1,42 @@
 # AI ID-Card Smart Scanner
+
+## Overview
+
+This project is an end-to-end pipeline for automatic **localization, orientation correction, and unskewing of ID card documents** in images. Given a photo of an ID card — which may be rotated at any angle (0–360°) and surrounded by background clutter such as a table surface, hands, or shadows — the system detects the document, crops it precisely, and returns a clean, deskewed output image with consistent padding.
+
+The pipeline consists of three main stages:
+
+1. **Document Localization** — A fine-tuned YOLOv11n segmentation model detects the document region and produces a pixel-level segmentation mask.
+2. **Corner Detection** — Contours are extracted from the mask and simplified to identify the four corner points of the document.
+3. **Orientation Correction & Unskewing** — The document's tilt angle is calculated from the corner geometry, and a perspective transformation is applied to produce a correctly oriented, rectangular output.
+
+The inference pipeline is also exposed as a **FastAPI** endpoint for easy integration.
+
+---
+
+## Dataset
+The model was finetuned on **DocXPand-25k** — a Opensource large-scale synthetic dataset of fake ID document images. It contains **24,994** richly annotated ID card images covering a wide variety of document types.
+
+> [GitHub](https://github.com/QuickSign/docxpand) | [Paper](https://arxiv.org/pdf/2407.20662)
+
+The dataset provides labels for multiple tasks:
+- ID classification
+- ID localization (document boundary polygon)
+- Detection of ID-specific features (face, signature, MRZ)
+- ID text field recognition
+
+For this project, only the **localization labels** were used — specifically the 4-point polygon annotation that marks the document boundary in each image. These were converted from the original JSON format into YOLO polygon segmentation format.
+
+**Dataset split used for training:**
+
+| Split      | Images |
+|:-----------|-------:|
+| Train      | 18,153 |
+| Validation |  3,446 |
+| Test       |  3,401 |
+
+---
+
 ## Steps to run Inference:
 
 ### Step-1 : 
@@ -42,18 +80,26 @@ Training script is provided as .ipynb file i.e., extra_scripts/yolo_polygon_seg_
 
 ### ID Card Segmentation
 
-![](example_results/document_segmentation.png)
+![](assets/example_results/document_segmentation.png)
 
 ### Landscape Images
 
 | ordered edges | angle visualization | final scanned image |
 |:---:|:---:|:---:|
-| ![](example_results/landscape_images/1/ordered_edges.png) | ![](example_results/landscape_images/1/angle_viz.png) | ![](example_results/landscape_images/1/corrected_img.png) |
-| ![](example_results/landscape_images/2/ordered_edges.jpg) | ![](example_results/landscape_images/2/angle_viz.jpg) | ![](example_results/landscape_images/2/corrected_img.jpg) |
+| ![](assets/example_results/landscape_images/1/ordered_edges.png) | ![](assets/example_results/landscape_images/1/angle_viz.png) | ![](assets/example_results/landscape_images/1/corrected_img.png) |
+| ![](assets/example_results/landscape_images/2/ordered_edges.jpg) | ![](assets/example_results/landscape_images/2/angle_viz.jpg) | ![](assets/example_results/landscape_images/2/corrected_img.jpg) |
 
 ### Portrait Images
 
 | ordered edges | angle visualization | final scanned image |
 |:---:|:---:|:---:|
-| ![](example_results/portrait_images/1/ordered_edges.png) | ![](example_results/portrait_images/1/angle_viz.png) | ![](example_results/portrait_images/1/corrected_img.png) |
-| ![](example_results/portrait_images/2/ordered_edges.png) | ![](example_results/portrait_images/2/angle_viz.png) | ![](example_results/portrait_images/2/corrected_img.png) |
+| ![](assets/example_results/portrait_images/1/ordered_edges.png) | ![](assets/example_results/portrait_images/1/angle_viz.png) | ![](assets/example_results/portrait_images/1/corrected_img.png) |
+| ![](assets/example_results/portrait_images/2/ordered_edges.png) | ![](assets/example_results/portrait_images/2/angle_viz.png) | ![](assets/example_results/portrait_images/2/corrected_img.png) |
+
+### Diagram
+
+![](assets/diagram.png)
+
+---
+
+> If this project helped you or you found it interesting, consider giving it a ⭐ — it means a lot and helps others discover it!
