@@ -98,7 +98,7 @@ Training script is provided as .ipynb file i.e., extra_scripts/yolo_polygon_seg_
 
 ### Diagram
 
-<img src="assets/diagram.png" width="700"/>
+<img src="assets/diagram.png" width="50%"/>
 
 ---
 
